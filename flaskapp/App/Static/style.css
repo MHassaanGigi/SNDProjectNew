@@ -1,0 +1,353 @@
+
+/* Header Section */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #0B1957;
+
+}
+
+header h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.header-left {
+    font-family: 'Lato',sans-serif !important;
+    font-weight: bold;
+    font-size: 25px;
+    color: #f8f3fa;
+    text-decoration: none;
+
+}
+
+.header-right a {
+    font-family: 'Segoe UI',sans-serif !important;
+    font-weight: bold;
+    font-size: 16px;
+    color: #f8f3fa;
+    margin: 0 10px;
+    position: relative;
+    text-decoration: none;
+
+}
+
+.header-right a:not(:last-child)::after {
+    content: "|"; /* Divider */
+    color: #f8f3fa; 
+    margin-left: 8px;
+    position: absolute;
+    margin-right: -10px;
+}
+
+nav a {
+    margin-left: 10px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+nav a:hover {
+    color: #007bff;
+}
+
+/* Footer Section */
+
+footer {
+    background-color: #0B1957;
+    font-family: 'Segoe UI', 'Poppins', 'Lato';
+    color: white;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+/* Body Section */
+
+body {
+    background-color: #f8f3fa;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Home page rotating logo */
+
+.rotating-logo {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  animation:fadeIn 2s ease-in-out,spin 30s linear infinite;
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.home-text {
+  color: #0B1957 !important;
+  font-family:'Lato',sans-serif;
+  text-align: center;
+  font-size: 32px;
+  margin-top: 10px;
+  animation: fadeIn 2s ease-in-out !important;
+}
+
+.home-subtext {
+  color: #0B1957 !important;
+  font-family: 'Lato',sans-serif;
+  text-align: center;
+  font-size: 16px;
+  margin-top: 0px;
+  color: #666;
+  animation: fadeInSub 2s ease-in-out !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInSub {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 0.6;
+    transform: translateY(0);
+  }
+}
+
+/* Main page */
+
+.page-title {
+  color: #0B1957 !important;
+  font-family: 'Lato', sans-serif;
+  text-align: center;
+  font-size: 40px;
+  font-weight: bold;
+  margin-top: 10px;
+  animation: fadeIn 2s ease-in-out !important;
+}
+
+.main-container {
+    display: flex;              /* Enables horizontal layout */
+    flex-wrap: wrap;            /* Allows wrapping to new line if needed */
+    justify-content: center;    /* Centers cards horizontally */
+    gap: 20px;                  /* Space between cards */
+    margin-top: 50px;
+}
+
+.page-title {
+  text-align: center !important;
+  font-size: 3rem;
+  margin-top: 0px !important;
+  font-weight: bold;
+  font-family: 'Lato', sans-serif;
+  color: #0B1957;
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+
+.model-title {
+  font-size: 1.5rem !important;
+  color: #e6d8c7  !important;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.model-cards-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+a {
+  text-decoration: none;
+}
+
+
+.model-card {
+  background-color: #0B1957;
+  border: 1px solid #f8f3ea;
+  border-radius: 16px;
+  padding: 24px;
+  width: 280px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  animation: fadeInCard 1s ease-in-out;
+}
+
+
+@keyframes fadeInCard {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 0.8;
+    transform: translateY(0);
+  }
+}
+.model-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.model-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  color: #f8f3ea;
+  font-family: 'Playfair Display', serif;
+}
+
+.model-card p {
+  font-size: 1rem;
+  margin-bottom: 16px;
+  color: #f8f3ea;
+  font-family: 'Lato', sans-serif;
+  line-height: 1.4;
+}
+
+.model-card ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.model-card ul li {
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  padding-left: 1.2em;
+  position: relative;
+  color: #f8f3ea;
+}
+
+.model-card ul li::before {
+  content: "✔";
+  position: absolute;
+  left: 0;
+  color: #e6dbc7;
+}
+
+/* Candyland and Bisconni Buttons */
+.division-logo {
+    width: 250px;          /* adjust base size */
+    height: auto;          /* keep proportions */
+    margin: 0 15px;        /* spacing between logos */
+    cursor: pointer;       /* makes them feel clickable */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: transparent;
+    filter: grayscale(100%);
+    opacity: 0.5
+}
+
+.division-logo:hover {
+    transform: scale(1.15); /* enlarge on hover */
+    background-color: transparent; /* optional hover shadow */
+}
+
+.division-logo.selected {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
+/* Loading Spinner  */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    color: #333;
+    z-index: 9999;
+    display: none; /* hidden by default */
+}
+
+.spinner {
+    border: 6px solid #f3f3f3; /* Light grey */
+    border-top: 6px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/*--Global Styling--*/
+/* Reusable fade-in animation for entire page */
+/* Fade-in for model content containers */
+.model-fade-in {
+    animation: fadeInModel 1s ease-in-out forwards;
+    opacity: 0; /* Start hidden */
+}
+
+@keyframes fadeInModel {
+    from {
+        opacity: 0;
+        transform: translateY(10px); /* small upward motion */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeInContent 0.5s ease-in-out;
+}
+
+@keyframes fadeInContent {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container-color {
+background-color: #f8f3fa !important; 
+}
+
+.brand-tables-container {
+    display: flex;
+    gap: 20px; /* spacing between tables */
+    flex-wrap: wrap; /* wrap if not enough horizontal space */
+}
+.brand-tables-container table {
+    border-collapse: collapse;
+    width: 200px; /* adjust as needed */
+}

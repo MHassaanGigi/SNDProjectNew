@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4 model-fade-in container-color">
+    <!-- Title and Intro -->
+    <div class="text-center">
+        <h1>Region-Wise Sales Forecasting</h1>
+        <p>This model forecasts monthly sales units by region to support better inventory and planning decisions.</p>
+    </div>
+    <div class="text-center mt-3">
+        <img src="{{ url_for('static', filename='images/CANDYLAND_LOGO.png') }}" 
+            alt="Candyland" 
+            class="division-logo" 
+            onclick="loadDivision('CANDYLAND')">
+
+        <img src="{{ url_for('static', filename='images/BISCONNI_LOGO.png') }}" 
+            alt="Bisconni" 
+            class="division-logo" 
+            onclick="loadDivision('BISCONNI')">
+    </div>
+     
+    <div id="dataSection" style="position: relative;">
+       <!--Loader-->
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="spinner"></div>
+            <p>Loading data, please wait...</p>
+        </div>
+        <!-- Actual vs Predicted Table -->
+        <div id="tableWrapper" class="mt-4">
+            <h3 class="text-center">Actual vs Predicted Sales (Test Data)</h3>
+            <div class="row">
+                <!-- North Table -->
+                <div class="col-md-6">
+                    <h5 class="text-center">North</h5>
+                    <table id="northTable" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Actual Sales</th>
+                                <th>Predicted Sales</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <!-- South Table -->
+                <div class="col-md-6">
+                    <h5 class="text-center">South</h5>
+                    <table id="southTable" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Actual Sales</th>
+                                <th>Predicted Sales</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Forecast Chart -->
+        <div id="chartWrapper" class="mt-4" style="height: 400px; width: 100%;">
+            <h3>8-Month Sales Forecast by Region</h3>
+            <canvas id="forecastChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    let forecastChartInstance = null; // store chart instance globally
+    
+    function setActiveLogo(activeBtn) {
+        document.querySelectorAll('.division-logo').forEach(logo => {
+            logo.classList.remove('selected');
+        });
+        activeBtn.classList.add('selected');
+    }
+
+    // Function to load forecast data for a given division
+    window.loadDivision = function(division) {
+        // 🔹 Highlight the clicked logo
+        const activeLogo = Array.from(document.querySelectorAll('.division-logo'))
+            .find(img => img.alt.toUpperCase() === division);
+        if (activeLogo) {
+            setActiveLogo(activeLogo);
+        }
+
+        const overlay = document.getElementById('loadingOverlay');
+        overlay.style.display = 'flex';
+
+        const url = division 
+            ? `/region-forecast?division=${encodeURIComponent(division)}`
+            : `/region-forecast`;
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                renderForecast(data);
+            })
+            .catch(err => console.error('Error loading division:', err))
+            .finally(() => {
+                overlay.style.display = 'none';
+            });
+    };
+
+    function renderForecast(data) {
+        const records = data.data || [];
+        // Fade-in reset
+        document.getElementById("tableWrapper").classList.remove("fade-in");
+        document.getElementById("chartWrapper").classList.remove("fade-in");
+
+        void document.getElementById("tableWrapper").offsetWidth; // Force reflow
+        void document.getElementById("chartWrapper").offsetWidth; // Force reflow
+
+        // Your existing table/graph code here...
+        const actualData = records.filter(r => r.TYPE === "Actual_vs_Predicted");
+        const forecastData = records;
+
+        // Populate table
+        // Helper function to format date like "Jan 2025"
+        function formatDateLabel(dateStr) {
+            const dateObj = new Date(dateStr);
+            return dateObj.toLocaleString('default', { month: 'short', year: 'numeric' });
+        }
+        
+        // Split data by region
+        const northData = actualData.filter(row => row.REGION.toLowerCase().includes("north"));
+        const southData = actualData.filter(row => row.REGION.toLowerCase().includes("south"));
+
+        // Populate North table
+        const northBody = document.querySelector("#northTable tbody");
+        northBody.innerHTML = '';
+        northData.forEach(row => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${formatDateLabel(row.DATE)}</td>
+                <td>${Number(row.MONTHLY_SALES).toLocaleString(undefined, {maximumFractionDigits:0})}</td>
+                <td>${Number(row.PREDICTED_SALES).toLocaleString(undefined, {maximumFractionDigits:0})}</td>
+            `;
+            northBody.appendChild(tr);
+        });
+
+        // Populate South table
+        const southBody = document.querySelector("#southTable tbody");
+        southBody.innerHTML = '';
+        southData.forEach(row => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${formatDateLabel(row.DATE)}</td>
+                <td>${Number(row.MONTHLY_SALES).toLocaleString(undefined, {maximumFractionDigits:0})}</td>
+                <td>${Number(row.PREDICTED_SALES).toLocaleString(undefined, {maximumFractionDigits:0})}</td>
+            `;
+            southBody.appendChild(tr);
+        });
+
+        // Add fade-in after content is updated
+        document.getElementById("tableWrapper").classList.add("fade-in");
+        document.getElementById("chartWrapper").classList.add("fade-in");
+
+        if (forecastData.length === 0) return;
+
+        const regions = [...new Set(forecastData.map(r => r.REGION))];
+        const dates = [...new Set(forecastData.map(r => r.DATE))].sort();
+
+        const dateLabels = dates.map(d => {
+            const dateObj = new Date(d);
+            return dateObj.toLocaleString('default', { month: 'short', year: 'numeric' });
+        });
+
+        const colors = ['blue', 'green', 'orange', 'purple', 'red', 'brown', 'cyan', 'magenta'];
+
+        const datasets = regions.map((region, idx) => {
+            const regionData = dates.map(date => {
+                const found = forecastData.find(r => r.REGION === region && r.DATE === date);
+                return found ? found.PREDICTED_SALES : null;
+            });
+            return {
+                label: region,
+                data: regionData,
+                borderColor: colors[idx % colors.length],
+                fill: false,
+                tension: 0.2
+            };
+        });
+
+        if (forecastChartInstance) {
+            // Smooth update instead of destroy
+            forecastChartInstance.data.labels = dateLabels;
+            forecastChartInstance.data.datasets = datasets;
+            forecastChartInstance.update();
+        } else {
+            const ctx = document.getElementById('forecastChart').getContext('2d');
+            forecastChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dateLabels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 800, // smooth transition
+                        easing: 'easeInOutCubic'
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: val => val.toLocaleString()
+                            }
+                        },
+                        x: {
+                            type: 'category',
+                            ticks: {
+                                autoSkip: false,
+                                maxTicksLimit: 10
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    layout: { padding: { bottom: 40 } }
+                }
+            });
+        }
+
+        console.log("Test R²:", data.test_r2);
+    }
+
+    // Initial load
+    loadDivision('CANDYLAND');
+});
+</script>
+
+{% endblock %}

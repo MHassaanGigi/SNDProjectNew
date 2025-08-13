@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Title and Intro -->
+    <div class="text-center">
+        <h1>SKU-Wise Sales Forecasting</h1>
+        <p>This model forecasts sales for selected SKUs in Karachi to support better inventory and planning decisions.</p>
+    </div>
+
+    <!-- Highlight Selected SKUs -->
+    <div class="mt-4">
+        <h3>Selected SKUs</h3>
+        <p>The following 8 SKUs were chosen for their similar price points and demand patterns.</p>
+        <ul>
+            <li>SKU 1</li>
+            <li>SKU 2</li>
+            <li>SKU 3</li>
+            <li>SKU 4</li>
+            <li>SKU 5</li>
+            <li>SKU 6</li>
+            <li>SKU 7</li>
+            <li>SKU 8</li>
+        </ul>
+    </div>
+
+    <!-- Test vs Predicted Table -->
+    <div class="mt-4">
+        <h3>Actual vs Predicted (Test Data)</h3>
+        <table id="testPredictedTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Actual</th>
+                    <th>Predicted XGBoost</th>
+                    <th>Predicted RandomForest</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Forecast Chart -->
+    <div class="mt-4">
+        <h3>6-Month Forecast</h3>
+        <canvas id="forecastChart"></canvas>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const getVal = (obj, keys) => {
+    for (const k of keys) if (k in obj && obj[k] !== null && obj[k] !== undefined) return obj[k];
+    return '';
+  };
+
+  // Helper to fetch + json + error handling
+  const fetchJson = (url) =>
+    fetch(url)
+      .then(res => {
+        if (!res.ok) return res.json().then(err => { throw err; });
+        return res.json();
+      });
+
+  // ---------- Test vs Predicted table ----------
+  fetchJson('/run-forecasting')
+    .then(data => {
+      console.log('run-forecasting returned:', data);
+      if (!Array.isArray(data)) {
+        console.error('Expected array for run-forecasting, got:', data);
+        return;
+      }
+      const tableBody = document.querySelector("#testPredictedTable tbody");
+      tableBody.innerHTML = ''; // clear
+      data.forEach(row => {
+        const Month = getVal(row, ['MONTH','Month','month']);
+        const actual = getVal(row, ['Actual','ACTUAL','actual','TARGET','ActualValue','ACTUAL_VALUE']);
+        const xgb = getVal(row, ['XGB_PRED','XGB_PREDICTED','XGBoost','XGBoost_Pred','Predicted_XGB','PREDICTED_XGB']);
+        const rf = getVal(row, ['RF_PRED','RF_PREDICTED','RF_PREDICT','RandomForest','RandomForest_Pred','Predicted_RF','PREDICTED_RF']);
+        
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${Month}</td>
+          <td>${actual}</td>
+          <td>${xgb}</td>
+          <td>${rf}</td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    })
+    .catch(err => {
+      console.error('Error fetching /run-forecasting:', err);
+    });
+
+  // ---------- Forecast chart ----------
+  fetchJson('/generate-forward-forecast')
+    .then(data => {
+      console.log('generate-forward-forecast returned:', data);
+      if (!Array.isArray(data)) {
+        console.error('Expected array for generate-forward-forecast, got:', data);
+        return;
+      }
+
+      // detect shape: aggregated rows with PREDICTED_RF/PREDICTED_XGB
+      const first = data[0] || {};
+      if ('PREDICTED_RF' in first || 'Forecast_RF' in first || 'Forecast_XGB' in first) {
+        // direct mapping
+        const labels = data.map(r => getVal(r, ['MONTH','month']));
+        const rfData = data.map(r => Number(getVal(r, ['PREDICTED_RF','Forecast_RF','RF_PRED','Predicted_RF'])) || null);
+        const xgbData = data.map(r => Number(getVal(r, ['PREDICTED_XGB','Forecast_XGB','XGB_PRED','Predicted_XGB'])) || null);
+
+        const ctx = document.getElementById('forecastChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [
+              { label: 'Random Forest', data: rfData, borderColor: 'blue', fill: false },
+              { label: 'XGBoost', data: xgbData, borderColor: 'green', fill: false }
+            ]
+          }
+        });
+
+      } else if ('MODEL' in first || data.some(d => 'MODEL' in d)) {
+        // pivot rows of form {DATE, MODEL, PRED_TARGET}
+        // get sorted unique dates
+        const dates = Array.from(new Set(data.map(r => getVal(r, ['MONTH','month']))))
+                           .sort((a,b)=> new Date(a) - new Date(b));
+        const models = Array.from(new Set(data.map(r => r.MODEL)));
+
+        const datasets = models.map((m, idx) => {
+          const arr = dates.map(d => {
+            const found = data.find(r => getVal(r, ['MONTH','month']) === d && r.MODEL === m);
+            return found ? Number(found.PRED_TARGET) : null;
+          });
+          // simple color choice
+          const colors = ['blue','green','orange','purple','red'];
+          return {
+            label: m,
+            data: arr,
+            borderColor: colors[idx % colors.length],
+            fill: false
+          };
+        });
+
+        const ctx = document.getElementById('forecastChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: dates,
+            datasets
+          }
+        });
+
+      } else {
+        console.error('Unknown forecast payload shape:', first);
+      }
+    })
+    .catch(err => {
+      console.error('Error fetching /generate-forward-forecast:', err);
+    });
+
+});
+</script>
+
+{% endblock %}

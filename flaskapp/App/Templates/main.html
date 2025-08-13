@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Title -->
+<h2 class="page-title">Select a Forecasting Model</h2>
+<div class="main-container">
+    <div class="model-cards-container">
+        <a href="/SkuWise" class="model-card-link">
+            <div class="model-card fade-in">
+                <h3 class="model-title">SKU-wise monthly units prediction</h3>
+                <p class="model-description">
+                This model intelligently groups similar-sized SKU products to identify patterns in sales behavior. It allows users to select a specific region and division, then predicts the net unit sales for the grouped SKUs. This helps in understanding regional demand trends and optimizing inventory planning across divisions
+                </p>
+                <ul class="model-features">
+                    <li>Forward Forecasting</li>
+                    <li>SKU Grouping</li>
+                    <li>Area & Division Filters</li>
+                    <li>Lag & Rolling Features</li>
+                    <li>Interactive Visualization</li>
+                </ul>
+            </div>
+        </a>
+    </div>
+    <div class="model-cards-container">
+        <a href="/RegionWise" class="model-card-link">
+            <div class="model-card fade-in">
+                <h3 class="model-title">Region</h3>
+                <p class="model-description">
+                This model forecasts monthly sales at a regional level by learning from historical demand patterns and seasonal trends. By comparing predicted and actual sales, it enables businesses to evaluate forecast accuracy and adapt strategies accordingly. The tool also provides region-specific insights, making it easier to anticipate shifts in market demand and plan future operations with confidence
+                </p>
+                <ul class="model-features">
+                    <li>Monitoring sales performance in different geographical areas</li>
+                    <li>Interactive visualizations</li>
+                    <li>Side-by-side comparison of Regions</li>
+                </ul>
+            </div>
+        </a>
+    </div>
+    <div class="model-cards-container">
+        <a href="/TopBrands" class="model-card-link">
+            <div class="model-card fade-in">
+                <h3 class="model-title">Top 3 Brands divided by division and Region</h3>
+                <p class="model-description">A robust ensemble learning method using decision trees for regression.</p>
+                <ul class="model-features">
+                    <li>Good with non-linear data</li>
+                    <li>Reduces overfitting</li>
+                    <li>Handles large datasets well</li>
+                </ul>
+            </div>
+        </a>
+    </div>
+    <div class="model-cards-container">
+        <div class="model-card fade-in">
+            <h3 class="model-title">Random Forest</h3>
+            <p class="model-description">A robust ensemble learning method using decision trees for regression.</p>
+            <ul class="model-features">
+                <li>Good with non-linear data</li>
+                <li>Reduces overfitting</li>
+                <li>Handles large datasets well</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<script>
+  function selectModel(modelName) {
+    console.log("Selected model:", modelName);
+    // You can later update this to trigger Flask route, chart update, etc.
+  }
+</script>
+

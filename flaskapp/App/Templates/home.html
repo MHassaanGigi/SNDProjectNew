@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block header %}
+<!-- Override with nothing -->
+{% endblock %}
+
+{% block footer %}
+<!-- Override with nothing -->
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center flex-column" style="height: 80vh;">
+    <a href="{{ url_for('main.main') }}">
+        <img src="{{ url_for('static', filename='Images/IIL_logo.png') }}" 
+             alt="IIL Logo" 
+             class="rotating-logo">
+    </a>
+    <div style="text-align: center;">
+    <div class="home-text">Predictive Analysis Project</div>
+    <div class="home-subtext">A project by: Hassaan Gigi, Mirza Raffay Baig</div>
+    </div>
+</div>
+{% endblock %}

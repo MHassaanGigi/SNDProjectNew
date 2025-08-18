@@ -373,3 +373,84 @@ background-color: #f8f3fa !important;
   transform: translateY(-5px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
+
+/* 🎨 Global font setup only for this page */
+.container {
+  font-family: "Poppins", sans-serif;
+  color: #222;
+}
+
+/* 1️⃣ Main Page Title */
+.container h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  color: #0B1957;
+}
+
+/* 2️⃣ Section Titles */
+.container h3 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: #0B1957;
+}
+
+/* 3️⃣ Sub-headings (h5) */
+.container h5 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #0B1957;
+  margin-top: 0.75rem;
+}
+
+/* 4️⃣ Paragraphs */
+.container p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0B1957;
+  opacity: 0.7;
+}
+
+/* 5️⃣ Lead Paragraph (intro under H1) */
+.container .lead {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #E6D8C7;
+}
+
+/* 6️⃣ Table Styling */
+#testPredictedTable th {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #0B1957;
+  text-align: center;
+}
+
+#testPredictedTable td {
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.container .sku {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #F8F3EA;
+  text-align: center;  
+
+}
+
+/* SKU Reasoning Icons */
+.icons-sku {
+  height: 180px;       /* bigger than before */
+  max-width: 100px;   /* keeps aspect ratio */
+  object-fit: contain;
+  margin-bottom: 0.75rem;
+}
+
+.icons-sku-2 {
+  height: 180px;       /* bigger than before */
+  max-width: 150px;   /* keeps aspect ratio */
+  object-fit: contain;
+  margin-bottom: 0.55rem;
+}

@@ -163,4 +163,8 @@ def get_forecast_and_test_data(var_region=None, var_division=None):
         full_2025_df = full_2025_df.drop(columns=["ACTUAL_SALES"])
 
     full_2025_df = full_2025_df.sort_values(["BRAND", "DATE"]).reset_index(drop=True)
-    return test_vs_pred_df, full_2025_df
+
+    actual_df = pd.DataFrame(run_query(base_query))
+    actual_df = actual_df[actual_df["YEAR"] == 2024]
+    
+    return test_vs_pred_df, full_2025_df,actual_df

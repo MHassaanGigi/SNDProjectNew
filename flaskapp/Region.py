@@ -162,5 +162,7 @@ def run_forecast(division=None):
     # === Compute Test R2 Score ===
     test_r2 = r2_score(actual, preds)
 
-    # Return just combined DataFrame and test_r2
-    return combined_df, test_r2
+    # === Actual Sales for Previous Year (2024) ===
+    actual_df = pd.DataFrame(run_query(query))
+    actual_df = actual_df[actual_df["YEAR"] == 2024]
+    return combined_df, test_r2,actual_df

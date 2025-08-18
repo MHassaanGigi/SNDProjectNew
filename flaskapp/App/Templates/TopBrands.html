@@ -5,16 +5,36 @@
     <!-- Title and Intro -->
     <div class="text-center">
         <h1>Brand-Wise Sales Forecasting</h1>
-        <p><p>
-This dashboard forecasts monthly sales  by brand and includes regional filters for detailed insights.
-You can select a division to view top brands, compare historical actual sales with predicted values, and track trends over time.
-The predictions are generated using historical sales data.
-By analyzing both actual vs predicted performance and future forecasts, users can make informed decisions on inventory, production, and marketing strategies.
-The interactive interface allows easy exploration by division, brand, and region.
-</p>
-</p>
+        <p>
+            This dashboard forecasts monthly sales by brand and includes regional filters for detailed insights.
+            You can select a division to view top brands, compare historical actual sales with predicted values, and track trends over time.
+            The predictions are generated using historical sales data.
+            By analyzing both actual vs predicted performance and future forecasts, users can make informed decisions on inventory, production, and marketing strategies.
+            The interactive interface allows easy exploration by division, brand, and region.
+        </p>
     </div>
  
+    <div class="mb-5 text-center">
+        <h3>Features</h3>
+        <div class="row mt-4">
+        <div class="col-md-4 mb-3">
+            <img src="/static/Images/divisiongranularity.png" alt="Division-Wise granularity" class="img-fluid mb-2 icons-sku">
+            <h5>Division-Wise granularity</h5>
+            <p>The division level filter provides a deeper layer of granularity in our region model </p>
+        </div>
+        <div class="col-md-4 mb-3">
+            <img src="/static/Images/regionalcampaign.png" alt="Regional-Campaign" class="img-fluid mb-2 icons-sku">
+            <h5>Tailored Regional Campaign</h5>
+            <p>By understanding the region sales patterns, it allows for region-specific promotions and planning</p>
+        </div>
+        <div class="col-md-4 mb-3">
+            <img src="/static/Images/inventory.png" alt="Inventory" class="img-fluid mb-2 icons-sku">
+            <h5>Optimized Inventory Allocation</h5>
+            <p>Allows better stock distribution across warehouses.</p>
+        </div>
+        </div>
+    </div>
+
     <!-- Division Logos -->
     <div class="text-center mt-3">
         <img src="{{ url_for('static', filename='images/CANDYLAND_LOGO.png') }}"
@@ -54,122 +74,159 @@ The interactive interface allows easy exploration by division, brand, and region
                     <div id="southTables" class="gap-3"></div>
                 </div>
             </div>
+ 
+            <!-- Legend -->
+            <div class="text-center mt-2 fade-in">
+                <small>
+                    <span style="background-color:#fde2e1; color:#a94442; padding:3px 8px; border-radius:4px; margin-right:10px;">
+                        🔴 Underprediction (Predicted &lt; Actual)
+                    </span>
+                    <span style="background-color:#e6f4ea; color:#2e7d32; padding:3px 8px; border-radius:4px;">
+                        🟢 Overprediction (Predicted ≥ Actual)
+                    </span>
+                </small>
+            </div>
         </div>
  
         <!-- Forecast Charts -->
-<div id="chartWrapper" class="mt-4" style="width: 100%;">
-    <h3>8-Month Sales Forecast by Region</h3>
-    <div class="row" style="height: 500px;">
-        <!-- North Region Chart -->
-        <div class="col-md-6" style="height: 100%;">
-            <h5 class="text-center mb-2">North Region</h5>
-            <canvas id="forecastChartNORTH" style="width: 100%; height: 100%;"></canvas>
-        </div>
+        <div id="chartWrapper" class="mt-4" style="width: 100%;">
+            <h3>2025 Sales Forecast (by Region)</h3>
+            <div class="row" style="height: 500px;">
+                <!-- North Region Chart -->
+                <div class="col-md-6" style="height: 100%;">
+                    <h5 class="text-center mb-2">North Region</h5>
+                    <canvas id="forecastChartNORTH" style="width: 100%; height: 100%;"></canvas>
+                </div>
  
-        <!-- South Region Chart -->
-        <div class="col-md-6" style="height: 100%;">
-            <h5 class="text-center mb-2">South Region</h5>
-            <canvas id="forecastChartSOUTH" style="width: 100%; height: 100%;"></canvas>
+                <!-- South Region Chart -->
+                <div class="col-md-6" style="height: 100%;">
+                    <h5 class="text-center mb-2">South Region</h5>
+                    <canvas id="forecastChartSOUTH" style="width: 100%; height: 100%;"></canvas>
+                </div>
+            </div>
+            <h3>Past Monthly Sales (by Region)</h3>
+            <div class="row" style="height: 500px;">
+                <!-- North Region Chart -->
+                <div class="col-md-6" style="height: 100%;">
+                    <h5 class="text-center mb-2">North Region</h5>
+                    <canvas id="ActualChartNORTH" style="width: 100%; height: 100%;"></canvas>
+                </div>
+ 
+                <!-- South Region Chart -->
+                <div class="col-md-6" style="height: 100%;">
+                    <h5 class="text-center mb-2">South Region</h5>
+                    <canvas id="ActualChartSOUTH" style="width: 100%; height: 100%;"></canvas>
+                </div>
+            </div>
         </div>
     </div>
-</div>
- 
  
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-   
+
     let forecastChartInstanceNorth = null;
     let forecastChartInstanceSouth = null;
- 
+    let actualChartInstanceNorth = null;
+    let actualChartInstanceSouth = null;
+
     function setActiveLogo(activeBtn) {
         document.querySelectorAll('.division-logo').forEach(logo => {
             logo.classList.remove('selected');
         });
         activeBtn.classList.add('selected');
     }
- 
+
     // Format numbers in millions
     function formatMillions(num) {
         if (num >= 1000000) return (num / 1000000).toFixed(2).replace(/\.00$/, '') + 'M';
         if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
         return num.toString();
     }
- 
+
+    // Helper: style predicted cell (light colors)
+    function getPredictedCell(actual, predicted) {
+        const color = predicted < actual
+            ? "style='background-color:#fde2e1; color:#a94442;'"   // light red
+            : "style='background-color:#e6f4ea; color:#2e7d32;'"; // light green
+        return `<td ${color}>${formatMillions(predicted)}</td>`;
+    }
+
     window.loadDivision = function (division) {
         const activeLogo = Array.from(document.querySelectorAll('.division-logo'))
             .find(img => img.alt.toUpperCase() === division);
         if (activeLogo) setActiveLogo(activeLogo);
- 
+
         const overlay = document.getElementById('loadingOverlay');
         overlay.style.display = 'flex';
- 
+
         const url = division
             ? `/TopBrands-Forecast?division=${encodeURIComponent(division)}`
             : `/TopBrands-Forecast`;
- 
+
         fetch(url)
             .then(res => res.json())
             .then(data => {
                 renderForecast(data);
+                renderActual(data.NORTH.actual, data.SOUTH.actual);
+                console.log("Fetched Data for 2024 Chart:", data); // 👈 Debug log
             })
             .catch(err => console.error('Error loading division:', err))
             .finally(() => {
                 overlay.style.display = 'none';
             });
     };
- 
+
     function renderForecast(data) {
         const northContainer = document.getElementById("northTables");
         const southContainer = document.getElementById("southTables");
         const chartWrapper = document.getElementById("chartWrapper");
- 
+
         northContainer.innerHTML = '';
         southContainer.innerHTML = '';
         chartWrapper.classList.remove("fade-in");
         void chartWrapper.offsetWidth;
- 
+
         function formatDateLabel(dateStr) {
             const dateObj = new Date(dateStr);
             return dateObj.toLocaleString('default', { month: 'short', year: 'numeric' });
         }
- 
+
         function safeNumber(val) {
             const num = parseFloat(val);
             return isNaN(num) ? 0 : num;
         }
- 
+
         function createRegionTables(regionData, container) {
             container.innerHTML = '';
             const brands = [...new Set((regionData.table || []).map(r => r.BRAND))];
- 
+
             for (let i = 0; i < brands.length; i += 3) {
                 const rowDiv = document.createElement("div");
                 rowDiv.classList.add("d-flex", "justify-content-center", "gap-3", "mb-4");
- 
+
                 const slice = brands.slice(i, i + 3);
                 slice.forEach(brand => {
                     const brandRows = regionData.table.filter(r => r.BRAND === brand);
- 
+
                     const colDiv = document.createElement("div");
                     colDiv.classList.add("card", "shadow-sm", "p-3", "text-center");
                     colDiv.style.flex = "0 0 auto";
                     colDiv.style.minWidth = "250px";
                     colDiv.style.backgroundColor = "#f8f9fa"; // light card background
- 
+
                     const brandHeading = document.createElement("h5");
                     brandHeading.textContent = brand;
                     brandHeading.classList.add("mb-3", "fw-bold");
                     colDiv.appendChild(brandHeading);
- 
+
                     const table = document.createElement("table");
                     table.classList.add("table", "table-hover", "table-bordered", "align-middle", "mb-0");
- 
+
                     const thead = document.createElement("thead");
                     thead.style.backgroundColor = "#0d3b66"; // dark blue header
                     thead.style.color = "#ffffff"; // white text
- 
                     thead.innerHTML = `
                         <tr>
                             <th>Date</th>
@@ -178,14 +235,17 @@ document.addEventListener("DOMContentLoaded", function () {
                         </tr>
                     `;
                     table.appendChild(thead);
- 
+
                     const tbody = document.createElement("tbody");
                     brandRows.forEach(row => {
                         const tr = document.createElement("tr");
+                        const actual = safeNumber(row.MONTHLY_SALES);
+                        const predicted = safeNumber(row.PREDICTED_SALES);
+
                         tr.innerHTML = `
                             <td>${formatDateLabel(row.DATE)}</td>
-                            <td>${formatMillions(safeNumber(row.MONTHLY_SALES))}</td>
-                            <td>${formatMillions(safeNumber(row.PREDICTED_SALES))}</td>
+                            <td>${formatMillions(actual)}</td>
+                            ${getPredictedCell(actual, predicted)}
                         `;
                         tbody.appendChild(tr);
                     });
@@ -193,112 +253,143 @@ document.addEventListener("DOMContentLoaded", function () {
                     colDiv.appendChild(table);
                     rowDiv.appendChild(colDiv);
                 });
- 
+
                 container.appendChild(rowDiv);
             }
         }
- 
+
         createRegionTables(data.NORTH, northContainer);
         createRegionTables(data.SOUTH, southContainer);
- 
-        // Chart logic
-        const northGraph = data.NORTH.graph || [];
-        const northBrands = [...new Set(northGraph.map(r => r.BRAND))];
-        const northDatasets = [];
-        const northLabels = [];
- 
-        northBrands.forEach((brand, i) => {
-            const brandColor = ['blue', 'red', 'orange'][i % 3];
-            const brandData = northGraph.filter(r => r.BRAND === brand);
- 
-            if (i === 0) {
-                brandData.forEach(r => northLabels.push(formatDateLabel(new Date(r.DATE))));
-            }
- 
-            const brandValues = northLabels.map(d => {
-                const found = brandData.find(r => formatDateLabel(new Date(r.DATE)) === d);
-                return found ? safeNumber(found.PREDICTED_SALES) : 0;
-            });
-               
-            northDatasets.push({
-                label: brand,
-                data: brandValues,
-                borderColor: brandColor,
-                fill: false,
-                tension: 0.2
-            });
-        });
- 
-        if (forecastChartInstanceNorth) {
-            forecastChartInstanceNorth.data.labels = northLabels;
-            forecastChartInstanceNorth.data.datasets = northDatasets;
-            forecastChartInstanceNorth.update();
-        } else {
-            const ctxNorth = document.getElementById('forecastChartNORTH').getContext('2d');
-            forecastChartInstanceNorth = new Chart(ctxNorth, {
-                type: 'line',
-                data: { labels: northLabels, datasets: northDatasets },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    animation: { duration: 800, easing: 'easeInOutCubic' },
-                    scales: { y: { beginAtZero: true, ticks: { callback: val => formatMillions(val) } } },
-                    plugins: { legend: { position: 'top' } },
-                    layout: { padding: { bottom: 40 } }
+
+        // --- Forecast Charts ---
+        function buildChart(containerId, graphData, colors) {
+            const brands = [...new Set(graphData.map(r => r.BRAND))];
+            const labels = [];
+            const datasets = [];
+
+            brands.forEach((brand, i) => {
+                const brandColor = colors[i % colors.length];
+                const brandData = graphData.filter(r => r.BRAND === brand);
+
+                if (i === 0) {
+                    brandData.forEach(r => labels.push(formatDateLabel(new Date(r.DATE))));
                 }
+
+                const brandValues = labels.map(d => {
+                    const found = brandData.find(r => formatDateLabel(new Date(r.DATE)) === d);
+                    return found ? safeNumber(found.PREDICTED_SALES) : 0;
+                });
+
+                datasets.push({
+                    label: brand,
+                    data: brandValues,
+                    borderColor: brandColor,
+                    fill: false,
+                    tension: 0.2
+                });
             });
+
+            const ctx = document.getElementById(containerId).getContext('2d');
+            return { ctx, datasets, labels };
         }
- 
-        const southGraph = data.SOUTH.graph || [];
-        const southBrands = [...new Set(southGraph.map(r => r.BRAND))];
-        const southDatasets = [];
-        const southLabels = [];
- 
-        southBrands.forEach((brand, i) => {
-            const brandColor = ['green', 'purple', 'orange'][i % 3];
-            const brandData = southGraph.filter(r => r.BRAND === brand);
- 
-            if (i === 0) {
-                brandData.forEach(r => southLabels.push(formatDateLabel(new Date(r.DATE))));
+
+        const northChartData = buildChart('forecastChartNORTH', data.NORTH.graph || [], ['blue', 'red', 'orange']);
+        if (forecastChartInstanceNorth) forecastChartInstanceNorth.destroy();
+        forecastChartInstanceNorth = new Chart(northChartData.ctx, {
+            type: 'line',
+            data: { labels: northChartData.labels, datasets: northChartData.datasets },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                animation: { duration: 800, easing: 'easeInOutCubic' },
+                scales: { y: { beginAtZero: true, ticks: { callback: val => formatMillions(val) } } },
+                plugins: { legend: { position: 'top' } },
+                layout: { padding: { bottom: 40 } }
             }
- 
-            const brandValues = southLabels.map(d => {
-                const found = brandData.find(r => formatDateLabel(new Date(r.DATE)) === d);
-                return found ? safeNumber(found.PREDICTED_SALES) : 0;
-            });
- 
-            southDatasets.push({
-                label: brand,
-                data: brandValues,
-                borderColor: brandColor,
-                fill: false,
-                tension: 0.2
-            });
         });
- 
-        if (forecastChartInstanceSouth) {
-            forecastChartInstanceSouth.data.labels = southLabels;
-            forecastChartInstanceSouth.data.datasets = southDatasets;
-            forecastChartInstanceSouth.update();
-        } else {
-            const ctxSouth = document.getElementById('forecastChartSOUTH').getContext('2d');
-            forecastChartInstanceSouth = new Chart(ctxSouth, {
-                type: 'line',
-                data: { labels: southLabels, datasets: southDatasets },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    animation: { duration: 800, easing: 'easeInOutCubic' },
-                    scales: { y: { beginAtZero: true, ticks: { callback: val => formatMillions(val) } } },
-                    plugins: { legend: { position: 'top' } },
-                    layout: { padding: { bottom: 40 } }
-                }
-            });
-        }
- 
-        tableWrapper.classList.add("fade-in");
+
+        const southChartData = buildChart('forecastChartSOUTH', data.SOUTH.graph || [], ['green', 'purple', 'orange']);
+        if (forecastChartInstanceSouth) forecastChartInstanceSouth.destroy();
+        forecastChartInstanceSouth = new Chart(southChartData.ctx, {
+            type: 'line',
+            data: { labels: southChartData.labels, datasets: southChartData.datasets },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                animation: { duration: 800, easing: 'easeInOutCubic' },
+                scales: { y: { beginAtZero: true, ticks: { callback: val => formatMillions(val) } } },
+                plugins: { legend: { position: 'top' } },
+                layout: { padding: { bottom: 40 } }
+            }
+        });
+
         chartWrapper.classList.add("fade-in");
     }
- 
+
+    function renderActual(northActualData, southActualData) {
+        function formatMillions(num) {
+            return (num / 1_000_000).toFixed(3) + " M";
+        }
+
+        function safeNumber(val) {
+            return val ? Number(val) : 0;
+        }
+
+        // --- North ---
+        const northLabels = [...new Set(northActualData.map(r => r.MONTH))].sort((a,b)=>a-b).map(m=>"Month "+m);
+        const northBrands = [...new Set(northActualData.map(r => r.BRAND))];
+        const northDatasets = northBrands.map((brand,i)=>{
+            const brandColor = ['blue','red','orange'][i%3];
+            const brandData = northLabels.map(label=>{
+                const found = northActualData.find(r=>r.BRAND===brand && "Month "+r.MONTH===label);
+                return found ? safeNumber(found.MONTHLY_SALES) : 0;
+            });
+            return { label: brand, data: brandData, borderColor: brandColor, fill:false, tension:0.2 };
+        });
+
+        const ctxNorth = document.getElementById('ActualChartNORTH').getContext('2d');
+        if(actualChartInstanceNorth) actualChartInstanceNorth.destroy();
+        actualChartInstanceNorth = new Chart(ctxNorth,{
+            type:'line',
+            data:{ labels:northLabels, datasets:northDatasets },
+            options:{
+                responsive:true,
+                maintainAspectRatio:false,
+                scales:{ y:{ beginAtZero:true, ticks:{ callback: val => formatMillions(val) } } },
+                plugins:{ legend:{ position:'top' } },
+                layout:{ padding:{ bottom:40 } },
+                animation:{ duration:800, easing:'easeInOutCubic' }
+            }
+        });
+
+        // --- South ---
+        const southLabels = [...new Set(southActualData.map(r => r.MONTH))].sort((a,b)=>a-b).map(m=>"Month "+m);
+        const southBrands = [...new Set(southActualData.map(r => r.BRAND))];
+        const southDatasets = southBrands.map((brand,i)=>{
+            const brandColor = ['green','purple','orange'][i%3];
+            const brandData = southLabels.map(label=>{
+                const found = southActualData.find(r=>r.BRAND===brand && "Month "+r.MONTH===label);
+                return found ? safeNumber(found.MONTHLY_SALES) : 0;
+            });
+            return { label: brand, data: brandData, borderColor: brandColor, fill:false, tension:0.2 };
+        });
+
+        const ctxSouth = document.getElementById('ActualChartSOUTH').getContext('2d');
+        if(actualChartInstanceSouth) actualChartInstanceSouth.destroy();
+        actualChartInstanceSouth = new Chart(ctxSouth,{
+            type:'line',
+            data:{ labels:southLabels, datasets:southDatasets },
+            options:{
+                responsive:true,
+                maintainAspectRatio:false,
+                scales:{ y:{ beginAtZero:true, ticks:{ callback: val => formatMillions(val) } } },
+                plugins:{ legend:{ position:'top' } },
+                layout:{ padding:{ bottom:40 } },
+                animation:{ duration:800, easing:'easeInOutCubic' }
+            }
+        });
+    }
+
     loadDivision('CANDYLAND');
+
 });
 </script>
  

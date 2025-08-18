@@ -4,63 +4,62 @@
 <div class="container mt-5 model-fade-in">
 
   <!-- 1️⃣ Page Title & Use Case -->
-  <div class="text-center mb-5">
+  <div class="text-center">
     <h1>Town-Based SKU Pattern Recognition & Prediction</h1>
-    <p class="lead">Using historical sales data and machine learning models to predict SKU demand across different towns for better inventory and planning decisions.</p>
   </div>
 
   <!-- 2️⃣ Short Description -->
   <div class="mb-5 text-center">
-    <p>We focus on a set of representative SKUs to understand patterns and forecast future sales. This allows businesses to make informed decisions on stocking and product launches.</p>
+    <p>We focus on a set of representative SKUs to understand patterns and forecast future sales. This allows businesses to make informed decisions on stocking and product launches.For this Model, we have selected Stock Keeping Units (SKUs) that match the description 24 BAGS X 24 BOXES. Below are the brands/products that have an sku which matches this description</p>
   </div>
 
   <!-- 3️⃣ Example SKU Patterns Selection -->
   <div class="mb-5">
-    <h3 class="mb-3 text-center">Selected SKUs</h3>
+    <h3 class="mb-3 text-center">Selected Products</h3>
     <div class="row text-center g-3 justify-content-center">
       <div class="col-4">
         <div class="sku-box p-3 shadow-sm rounded-circle">
-          <p>ABC JELLY</p>
+          <sku>ABC JELLY</sku>
         </div>
       </div>
       <div class="col-4">
         <div class="sku-box p-3 shadow-sm rounded-circle">
-          <p>BOTTLE JELLY</p>
+          <sku>BOTTLE JELLY</sku>
         </div>
       </div>
       <div class="col-4">
         <div class="sku-box p-3 shadow-sm rounded-circle">
-          <p>CHILLI MILLI</p>
+          <sku>CHILLI MILLI</sku>
         </div>
       </div>
       <div class="col-4">
         <div class="sku-box p-3 shadow-sm rounded-circle">
-          <p>DINO JELLY</p>
+          <sku>DINO JELLY</sku>
         </div>
       </div>
       <div class="col-4">
         <div class="sku-box p-3 shadow-sm rounded-circle">
-          <p>FIZZY O JELLY</p>
+          <sku>FIZZY O JELLY</sku>
         </div>
       </div>
       <div class="col-4">
         <div class="sku-box p-3 shadow-sm rounded-circle">
-          <p>SOUR ABC JELLY</p>
+          <sku>SOUR ABC JELLY</sku>
         </div>
       </div>
       <div class="col-4">
         <div class="sku-box p-3 shadow-sm rounded-circle">
-          <p>SOUR BEAR JELLY</p>
+          <sku>SOUR BEAR JELLY</sku>
         </div>
       </div>
       <div class="col-4">
         <div class="sku-box p-3 shadow-sm rounded-circle">
-          <p>SOUR BITES JELLY</p>
+          <sku>SOUR BITES JELLY</sku>
         </div>
       </div>
       <div class="col-4">
         <div class="sku-box p-3 shadow-sm rounded-circle">
-          <p>SWEET BEAR JELLY</p>
+          <sku>SWEET BEAR JELLY</sku>
         </div>
       </div>
     </div>
@@ -71,19 +70,37 @@
     <h3>Why These SKUs?</h3>
     <div class="row mt-4">
       <div class="col-md-4 mb-3">
-        <img src="/static/Images/price.png" alt="Price" class="img-fluid mb-2" style="height: 60px;">
+        <img src="/static/Images/price.png" alt="Price" class="img-fluid mb-2 icons-sku">
         <h5>Similar Price Points</h5>
         <p>Allows fair comparison and pattern recognition across products.</p>
       </div>
       <div class="col-md-4 mb-3">
-        <img src="/static/Images/packaging.png" alt="Packaging" class="img-fluid mb-2" style="height: 60px;">
+        <img src="/static/Images/packaging.png" alt="Packaging" class="img-fluid mb-2 icons-sku">
         <h5>Similar Packaging</h5>
         <p>Visual and size similarity helps assess consumer preferences.</p>
       </div>
       <div class="col-md-4 mb-3">
-        <img src="/static/Images/demand.png" alt="Demand" class="img-fluid mb-2" style="height: 60px;">
+        <img src="/static/Images/demand.png" alt="Demand" class="img-fluid mb-2 icons-sku">
         <h5>High Demand Stability</h5>
         <p>Consistent sales make forecasting models more reliable.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5️⃣ What is 1 Unit -->
+   <div class="mb-5 text-center">
+    <h3>Whhat are we considering 1 Unit?</h3>
+    <div class="row align-items-center mb-4">
+      <!-- Image -->
+      <div class="col-md-4 mb-3 ">
+        <img src="/static/Images/24x24.png" alt="ABC Jelly BOX" class="img-fluid mb-2"  style="max-width: 250px; height: auto; margin-right: 15px;">
+      </div>
+
+      <!-- Text -->
+      <div class="col-md-8">
+        <p>
+          This 1 box represents what we have considered to be as one unit in our model.
+        </p>
       </div>
     </div>
   </div>
@@ -94,9 +111,17 @@
     <p>We used Random Forest and XGBoost due to their ability to handle complex, non-linear relationships in sales data. The below table shows the accuracy and precision of the models in accordance to the actual dataset</p>
   </div>
 
+   <!-- 6️⃣b Forecast Line Chart -->
+  <div class="mb-5">
+    <h3 class="text-center">2025 Forecast</h3>
+    <div style="height:400px;">
+      <canvas id="forecastChart"></canvas>
+    </div>
+  </div>
+
   <!-- 6️⃣ Comparison Table -->
   <div class="mb-5">
-    <h3>Actual vs Predicted Sales</h3>
+    <h3>Actual vs Predicted Unit Sold</h3>
     <table id="testPredictedTable" class="table table-striped table-bordered">
       <thead>
         <tr>
@@ -108,30 +133,6 @@
       </thead>
       <tbody></tbody>
     </table>
-  </div>
-  <!-- 6️⃣b Forecast Line Chart -->
-  <div class="mb-5">
-    <h3 class="text-center">Monthly Forecast</h3>
-    <div style="height:400px;">
-      <canvas id="forecastChart"></canvas>
-    </div>
-  </div>
-
-  <!-- 7️⃣ Uses / Business Value -->
-  <div class="mb-5 text-center">
-    <h3>Business Applications</h3>
-    <div class="row mt-4">
-      <div class="col-md-6 mb-3 text-center">
-        <img src="/static/icons/stockkeeping.png" alt="Stockkeeping" class="img-fluid mb-2" style="height: 60px;">
-        <h5>Stockkeeping & Resource Management</h5>
-        <p>Plan inventory better, optimize stock levels, and reduce wastage.</p>
-      </div>
-      <div class="col-md-6 mb-3 text-center">
-        <img src="/static/icons/product_launch.png" alt="Product Launch" class="img-fluid mb-2" style="height: 60px;">
-        <h5>Launching New Products</h5>
-        <p>Predict potential demand for similar products in target towns and regions.</p>
-      </div>
-    </div>
   </div>
 
   <!-- 8️⃣ Town Breakdown -->
@@ -154,7 +155,22 @@
       </div>
     </div>
   </div>
-
+    <!-- 7️⃣ Uses / Business Value -->
+  <div class="mb-5 text-center">
+    <h3>Business Applications</h3>
+    <div class="row mt-4">
+      <div class="col-md-6 mb-3 text-center">
+        <img src="/static/Images/stockkeeping.png" alt="stockkeeping" class="img-fluid mb-2 icons-sku-2">
+        <h5>Stockkeeping & Resource Management</h5>
+        <p>Plan inventory better, optimize stock levels, and reduce wastage.</p>
+      </div>
+      <div class="col-md-6 mb-3 text-center">
+        <img src="/static/Images/product_launch.png" alt="Product Launch" class="img-fluid mb-2 icons-sku-2">
+        <h5>Launching New Products</h5>
+        <p>Predict potential demand for similar products in target towns and regions.</p>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

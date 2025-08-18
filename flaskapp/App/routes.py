@@ -70,18 +70,24 @@ def run_forecasting_route():
 
 from Region import run_forecast
 
-@main_bp.route('/region-forecast',methods=['GET'])
+@main_bp.route('/region-forecast', methods=['GET'])
 def forecast_route():
     division = request.args.get('division', None)
-    combined_df, test_r2 = run_forecast(division=division)
-    # Convert DataFrame to records for JSON response
+    combined_df, test_r2, actual_df = run_forecast(division=division)
+
+    # --- Handle combined_df ---
     data_records = combined_df[["REGION", "DATE","DATE_LABEL","MONTHLY_SALES", "PREDICTED_SALES", "TYPE"]].copy().replace([np.nan, np.inf, -np.inf], None)
-    # Convert datetime to string for JSON serialization
     data_records["DATE"] = data_records["DATE"].dt.strftime("%Y-%m-%d")
     result_json = data_records.to_dict(orient='records')
+    import calendar
+    # --- Handle actual_df ---
+    actual_df["MONTH_NAME"] = actual_df["MONTH"].apply(lambda x: calendar.month_abbr[int(x)])
+    actual_records = actual_df[["REGION", "MONTH", "MONTH_NAME", "MONTHLY_SALES"]].copy().replace([np.nan, np.inf, -np.inf], None)
+    actual_json = actual_records.to_dict(orient="records")
 
     return jsonify({
         "data": result_json,
+        "actual_data": actual_json,
         "test_r2": test_r2
     })
 
@@ -92,7 +98,7 @@ def TopBrands_forecast():
 
     def process_forecast(region):
         # Get forecast/test data
-        table_df, graph_df = get_forecast_and_test_data(region, division)
+        table_df, graph_df,actual_df = get_forecast_and_test_data(region, division)
 
         # --- Fix actual sales table ---
         if "ACTUAL_SALES" in table_df.columns:
@@ -106,20 +112,22 @@ def TopBrands_forecast():
         graph_df = graph_df.sort_values(["BRAND", "DATE"])  # optional: ensure sorted
         #graph_df = graph_df.drop_duplicates(subset="DATE", keep="first")
         
-        return table_df, graph_df
+        return table_df, graph_df,actual_df
 
     # Process both regions
-    north_table, north_graph = process_forecast("NORTH")
-    south_table, south_graph = process_forecast("SOUTH")
+    north_table, north_graph,north_actual = process_forecast("NORTH")
+    south_table, south_graph,south_actual = process_forecast("SOUTH")
 
     # Return combined response
     return jsonify({
         "NORTH": {
             "table": north_table.to_dict(orient="records"),
-            "graph": north_graph.to_dict(orient="records")
+            "graph": north_graph.to_dict(orient="records"),
+            "actual": north_actual.to_dict(orient="records")
         },
         "SOUTH": {
             "table": south_table.to_dict(orient="records"),
-            "graph": south_graph.to_dict(orient="records")
+            "graph": south_graph.to_dict(orient="records"),
+            "actual": south_actual.to_dict(orient="records")
         }
     })

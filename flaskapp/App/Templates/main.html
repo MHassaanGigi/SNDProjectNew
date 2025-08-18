@@ -1,72 +1,121 @@
 {% extends "base.html" %}
-
+ 
 {% block content %}
-    <!-- Title -->
-<h2 class="page-title">Select a Forecasting Model</h2>
-<div class="main-container">
-    <div class="model-cards-container">
-        <a href="/SkuWise" class="model-card-link">
-            <div class="model-card fade-in">
-                <h3 class="model-title">SKU-wise monthly units prediction</h3>
-                <p class="model-description">
-                This model intelligently groups similar-sized SKU products to identify patterns in sales behavior. It allows users to select a specific region and division, then predicts the net unit sales for the grouped SKUs. This helps in understanding regional demand trends and optimizing inventory planning across divisions
-                </p>
-                <ul class="model-features">
-                    <li>Forward Forecasting</li>
-                    <li>SKU Grouping</li>
-                    <li>Area & Division Filters</li>
-                    <li>Lag & Rolling Features</li>
-                    <li>Interactive Visualization</li>
-                </ul>
-            </div>
-        </a>
+<div class="container mt-4 model-fade-in container-color">
+ 
+    <!-- Predictive Analysis Project -->
+    <div class="mb-5">
+        <h2 class="text-center">Predictive Analysis Project</h2>
+        <p class="text-center">
+        As part of our internship with <strong>Ismail Industries Pvt. Ltd</strong>, our team developed machine learning models to support predictive analytics in sales forecasting.</p>
+        <p class="text-center">
+        We were provided with 16 months of sales data, spanning from <strong>January 2024 to April 2025.</strong> Our models were trained on varying portions of this dataset and tested on the remaining data in order to evaluate performance and optimize for the best predictive results. Forecasts were then generated for the <strong>remaining months of 2025.</strong> To ensure robust performance, the models used <strong>time-series features</strong> such as monthly and quarterly lag variables, rolling averages and variances. This allowed us to capture demand patterns more accurately and produce actionable insights.
+        </p>
     </div>
-    <div class="model-cards-container">
-        <a href="/RegionWise" class="model-card-link">
-            <div class="model-card fade-in">
-                <h3 class="model-title">Region</h3>
-                <p class="model-description">
-                This model forecasts monthly sales at a regional level by learning from historical demand patterns and seasonal trends. By comparing predicted and actual sales, it enables businesses to evaluate forecast accuracy and adapt strategies accordingly. The tool also provides region-specific insights, making it easier to anticipate shifts in market demand and plan future operations with confidence
-                </p>
-                <ul class="model-features">
-                    <li>Monitoring sales performance in different geographical areas</li>
-                    <li>Interactive visualizations</li>
-                    <li>Side-by-side comparison of Regions</li>
-                </ul>
+ 
+    <!-- Corporate Impact (with icons) -->
+    <div class="mb-5 text-center">
+        <h3>Corporate Impact</h3>
+        <div class="row mt-4">
+            <div class="col-md-4 mb-3">
+                <img src="{{ url_for('static', filename='Images/sales.png') }}" alt="Sales" class="img-fluid mb-2 icons-sku-2">
+ 
+                <h5>Sales</h5>
+                <p>Helps sales teams set accurate targets with confidence.</p>
             </div>
-        </a>
-    </div>
-    <div class="model-cards-container">
-        <a href="/TopBrands" class="model-card-link">
-            <div class="model-card fade-in">
-                <h3 class="model-title">Top 3 Brands divided by division and Region</h3>
-                <p class="model-description">A robust ensemble learning method using decision trees for regression.</p>
-                <ul class="model-features">
-                    <li>Good with non-linear data</li>
-                    <li>Reduces overfitting</li>
-                    <li>Handles large datasets well</li>
-                </ul>
+            <div class="col-md-4 mb-3">
+                <img src="{{ url_for('static', filename='Images/marketing.png') }}" alt="Sales" class="img-fluid mb-2 icons-sku-2">
+                <h5>Marketing</h5>
+                <p>Supports marketing in planning data-driven campaigns.</p>
             </div>
-        </a>
-    </div>
-    <div class="model-cards-container">
-        <div class="model-card fade-in">
-            <h3 class="model-title">Random Forest</h3>
-            <p class="model-description">A robust ensemble learning method using decision trees for regression.</p>
-            <ul class="model-features">
-                <li>Good with non-linear data</li>
-                <li>Reduces overfitting</li>
-                <li>Handles large datasets well</li>
-            </ul>
+            <div class="col-md-4 mb-3">
+                <img src="{{ url_for('static', filename='Images/supplychain.png') }}" alt="Sales" class="img-fluid mb-2 icons-sku-2">
+                <h5>Supply Chain</h5>
+                <p>Optimizes inventory allocation and procurement planning.</p>
+            </div>
         </div>
     </div>
+ 
+    <!-- Limitations & Future Enhancements (with icons) -->
+    <div class="mb-5 text-center">
+        <h3>Future Enhancements</h3>
+        <div class="row mt-4">
+            <div class="col-md-4 mb-3">
+                <img src="{{ url_for('static', filename='Images/analytics.png') }}" alt="Analytics" class="icons-sku-2 mb-2">
+                <h5>Drill-Down Analytics</h5>
+                <p>It would allow users to move from a high-level summary view into more detailed levels of data.</p>
+            </div>
+            <div class="col-md-4 mb-3">
+                <img src="{{ url_for('static', filename='Images/accuracy.png') }}" alt="Sales" class="icons-sku-2 mb-2">
+                <h5>Accuracy</h5>
+                <p>Better accuracy may be achieved for low-sale brands/flavours with more historical data.</p>
+            </div>
+            <div class="col-md-4 mb-3">
+                <img src="{{ url_for('static', filename='Images/reports.png') }}" alt="Reports" class="icons-sku-2 mb-2">
+                <h5>Automated Reports</h5>
+                <p>Schedule monthly forecast email reports directly to marketing, supply chain, etc.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mb-5 text-center">
+        <h3>Limitations</h3>
+        <div class="row mt-4">
+        <div class="col-md-6 mb-3 text-center">
+            <img src="/static/Images/time.png" alt="Time" class="img-fluid mb-2 icons-sku-2">
+            <h5>Time Constraint</h5>
+            <p>Our internship spanned 8 weeks, during which we encountered several challenges, including data inconsistencies and hardware complications, that had to be resolved before we could properly begin our project.</p>
+        </div>
+        <div class="col-md-6 mb-3 text-center">
+            <img src="/static/Images/data.png" alt="" class="img-fluid mb-2 icons-sku-2">
+            <h5>Constraints in Dataset</h5>
+            <p>We were provided with a relatively small dataset spanning 16 months, which led to inconsistent forecasting results and limited the modeling techniques we could apply. Additionally, the dataset contained issues such as missing values and negative entries that further impacted data quality..</p>
+        </div>
+        </div>
+    </div>
+
+    <!-- Forecasting Models -->
+    <div class="text-center">
+        <h2 class="page-title">Select a Forecasting Model</h2>
+        <div class="main-container">
+            <div class="model-cards-container">
+ 
+                <a href="/SkuWise" class="model-card-link">
+                    <div class="model-card fade-in">
+                        <h3 class="model-title">SKU-wise monthly units prediction</h3>
+                        <ul style="text-align:left; padding-left:10px;">
+                            <li>Forward Forecasting</li>
+                            <li>SKU Grouping</li>
+                            <li>Area & Division Filters</li>
+                            <li>Lag & Rolling Features</li>
+                        </ul>
+                    </div>
+                </a>
+ 
+                <a href="/RegionWise" class="model-card-link">
+                    <div class="model-card fade-in">
+                        <h3 class="model-title">Region</h3>
+                        <ul style="text-align:left; padding-left:10px;">
+                            <li>Supports division-wise filters</li>
+                            <li>Provides region insights</li>
+                            <li>Enhanced planning</li>
+                            <li>Side-by-side comparison</li>
+                        </ul>
+                    </div>
+                </a>
+ 
+                <a href="/TopBrands" class="model-card-link">
+                    <div class="model-card fade-in">
+                        <h3 class="model-title">Top 3 Brands divided by Division and Region</h3>
+                        <ul style="text-align:left; padding-left:10px;">
+                            <li>Good with non-linear data</li>
+                            <li>Reduces overfitting</li>
+                            <li>Handles large datasets</li>
+                        </ul>
+                    </div>
+                </a>
+ 
+               
 </div>
 {% endblock %}
-
-<script>
-  function selectModel(modelName) {
-    console.log("Selected model:", modelName);
-    // You can later update this to trigger Flask route, chart update, etc.
-  }
-</script>
-
+ 

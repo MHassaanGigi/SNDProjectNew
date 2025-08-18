@@ -1,166 +1,301 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-    <!-- Title and Intro -->
-    <div class="text-center">
-        <h1>SKU-Wise Sales Forecasting</h1>
-        <p>This model forecasts sales for selected SKUs in Karachi to support better inventory and planning decisions.</p>
+<div class="container mt-5 model-fade-in">
+
+  <!-- 1️⃣ Page Title & Use Case -->
+  <div class="text-center mb-5">
+    <h1>Town-Based SKU Pattern Recognition & Prediction</h1>
+    <p class="lead">Using historical sales data and machine learning models to predict SKU demand across different towns for better inventory and planning decisions.</p>
+  </div>
+
+  <!-- 2️⃣ Short Description -->
+  <div class="mb-5 text-center">
+    <p>We focus on a set of representative SKUs to understand patterns and forecast future sales. This allows businesses to make informed decisions on stocking and product launches.</p>
+  </div>
+
+  <!-- 3️⃣ Example SKU Patterns Selection -->
+  <div class="mb-5">
+    <h3 class="mb-3 text-center">Selected SKUs</h3>
+    <div class="row text-center g-3 justify-content-center">
+      <div class="col-4">
+        <div class="sku-box p-3 shadow-sm rounded-circle">
+          <p>ABC JELLY</p>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="sku-box p-3 shadow-sm rounded-circle">
+          <p>BOTTLE JELLY</p>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="sku-box p-3 shadow-sm rounded-circle">
+          <p>CHILLI MILLI</p>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="sku-box p-3 shadow-sm rounded-circle">
+          <p>DINO JELLY</p>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="sku-box p-3 shadow-sm rounded-circle">
+          <p>FIZZY O JELLY</p>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="sku-box p-3 shadow-sm rounded-circle">
+          <p>SOUR ABC JELLY</p>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="sku-box p-3 shadow-sm rounded-circle">
+          <p>SOUR BEAR JELLY</p>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="sku-box p-3 shadow-sm rounded-circle">
+          <p>SOUR BITES JELLY</p>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="sku-box p-3 shadow-sm rounded-circle">
+          <p>SWEET BEAR JELLY</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4️⃣ Three-Segment SKU Selection Reasoning -->
+  <div class="mb-5 text-center">
+    <h3>Why These SKUs?</h3>
+    <div class="row mt-4">
+      <div class="col-md-4 mb-3">
+        <img src="/static/Images/price.png" alt="Price" class="img-fluid mb-2" style="height: 60px;">
+        <h5>Similar Price Points</h5>
+        <p>Allows fair comparison and pattern recognition across products.</p>
+      </div>
+      <div class="col-md-4 mb-3">
+        <img src="/static/Images/packaging.png" alt="Packaging" class="img-fluid mb-2" style="height: 60px;">
+        <h5>Similar Packaging</h5>
+        <p>Visual and size similarity helps assess consumer preferences.</p>
+      </div>
+      <div class="col-md-4 mb-3">
+        <img src="/static/Images/demand.png" alt="Demand" class="img-fluid mb-2" style="height: 60px;">
+        <h5>High Demand Stability</h5>
+        <p>Consistent sales make forecasting models more reliable.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5️⃣ Models Used -->
+  <div class="mb-5 text-center">
+    <h3>Forecasting Models</h3>
+    <p>We used Random Forest and XGBoost due to their ability to handle complex, non-linear relationships in sales data. The below table shows the accuracy and precision of the models in accordance to the actual dataset</p>
+  </div>
+
+  <!-- 6️⃣ Comparison Table -->
+  <div class="mb-5">
+    <h3>Actual vs Predicted Sales</h3>
+    <table id="testPredictedTable" class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Actual Units Sold</th>
+          <th>Predicted Units Sold (XGBoost)</th>
+          <th>Predicted Units Sold (RandomForest)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <!-- 6️⃣b Forecast Line Chart -->
+  <div class="mb-5">
+    <h3 class="text-center">Monthly Forecast</h3>
+    <div style="height:400px;">
+      <canvas id="forecastChart"></canvas>
+    </div>
+  </div>
+
+  <!-- 7️⃣ Uses / Business Value -->
+  <div class="mb-5 text-center">
+    <h3>Business Applications</h3>
+    <div class="row mt-4">
+      <div class="col-md-6 mb-3 text-center">
+        <img src="/static/icons/stockkeeping.png" alt="Stockkeeping" class="img-fluid mb-2" style="height: 60px;">
+        <h5>Stockkeeping & Resource Management</h5>
+        <p>Plan inventory better, optimize stock levels, and reduce wastage.</p>
+      </div>
+      <div class="col-md-6 mb-3 text-center">
+        <img src="/static/icons/product_launch.png" alt="Product Launch" class="img-fluid mb-2" style="height: 60px;">
+        <h5>Launching New Products</h5>
+        <p>Predict potential demand for similar products in target towns and regions.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8️⃣ Town Breakdown -->
+  <div class="mb-5">
+    <h3 class="text-center">Town-Wise Units Distribution</h3>
+    <div class="mt-4 mb-4 d-flex justify-content-center">
+      <div style="max-width: 400px; width: 100%; height: 400px;">
+        <canvas id="townPieChart"></canvas>
+      </div>
     </div>
 
-    <!-- Highlight Selected SKUs -->
-    <div class="mt-4">
-        <h3>Selected SKUs</h3>
-        <p>The following 8 SKUs were chosen for their similar price points and demand patterns.</p>
-        <ul>
-            <li>SKU 1</li>
-            <li>SKU 2</li>
-            <li>SKU 3</li>
-            <li>SKU 4</li>
-            <li>SKU 5</li>
-            <li>SKU 6</li>
-            <li>SKU 7</li>
-            <li>SKU 8</li>
-        </ul>
+    <div class="row mt-4">
+      <div class="col-md-6" style="height: 400px;">
+        <h5>Town × Random Forest</h5>
+        <canvas id="townChartRF"></canvas>
+      </div>
+      <div class="col-md-6" style="height: 400px;">
+        <h5>Town × XGBoost</h5>
+        <canvas id="townChartXGB"></canvas>
+      </div>
     </div>
+  </div>
 
-    <!-- Test vs Predicted Table -->
-    <div class="mt-4">
-        <h3>Actual vs Predicted (Test Data)</h3>
-        <table id="testPredictedTable" class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Month</th>
-                    <th>Actual</th>
-                    <th>Predicted XGBoost</th>
-                    <th>Predicted RandomForest</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-
-    <!-- Forecast Chart -->
-    <div class="mt-4">
-        <h3>6-Month Forecast</h3>
-        <canvas id="forecastChart"></canvas>
-    </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-  const getVal = (obj, keys) => {
-    for (const k of keys) if (k in obj && obj[k] !== null && obj[k] !== undefined) return obj[k];
-    return '';
-  };
+    const getVal = (obj, keys) => {
+        for (const k of keys) {
+            if (k in obj && obj[k] !== null && obj[k] !== undefined) return obj[k];
+        }
+        return '';
+    };
 
-  // Helper to fetch + json + error handling
-  const fetchJson = (url) =>
-    fetch(url)
-      .then(res => {
-        if (!res.ok) return res.json().then(err => { throw err; });
-        return res.json();
-      });
-
-  // ---------- Test vs Predicted table ----------
-  fetchJson('/run-forecasting')
-    .then(data => {
-      console.log('run-forecasting returned:', data);
-      if (!Array.isArray(data)) {
-        console.error('Expected array for run-forecasting, got:', data);
-        return;
-      }
-      const tableBody = document.querySelector("#testPredictedTable tbody");
-      tableBody.innerHTML = ''; // clear
-      data.forEach(row => {
-        const Month = getVal(row, ['MONTH','Month','month']);
-        const actual = getVal(row, ['Actual','ACTUAL','actual','TARGET','ActualValue','ACTUAL_VALUE']);
-        const xgb = getVal(row, ['XGB_PRED','XGB_PREDICTED','XGBoost','XGBoost_Pred','Predicted_XGB','PREDICTED_XGB']);
-        const rf = getVal(row, ['RF_PRED','RF_PREDICTED','RF_PREDICT','RandomForest','RandomForest_Pred','Predicted_RF','PREDICTED_RF']);
-        
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${Month}</td>
-          <td>${actual}</td>
-          <td>${xgb}</td>
-          <td>${rf}</td>
-        `;
-        tableBody.appendChild(tr);
-      });
-    })
-    .catch(err => {
-      console.error('Error fetching /run-forecasting:', err);
-    });
-
-  // ---------- Forecast chart ----------
-  fetchJson('/generate-forward-forecast')
-    .then(data => {
-      console.log('generate-forward-forecast returned:', data);
-      if (!Array.isArray(data)) {
-        console.error('Expected array for generate-forward-forecast, got:', data);
-        return;
-      }
-
-      // detect shape: aggregated rows with PREDICTED_RF/PREDICTED_XGB
-      const first = data[0] || {};
-      if ('PREDICTED_RF' in first || 'Forecast_RF' in first || 'Forecast_XGB' in first) {
-        // direct mapping
-        const labels = data.map(r => getVal(r, ['MONTH','month']));
-        const rfData = data.map(r => Number(getVal(r, ['PREDICTED_RF','Forecast_RF','RF_PRED','Predicted_RF'])) || null);
-        const xgbData = data.map(r => Number(getVal(r, ['PREDICTED_XGB','Forecast_XGB','XGB_PRED','Predicted_XGB'])) || null);
-
-        const ctx = document.getElementById('forecastChart').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels,
-            datasets: [
-              { label: 'Random Forest', data: rfData, borderColor: 'blue', fill: false },
-              { label: 'XGBoost', data: xgbData, borderColor: 'green', fill: false }
-            ]
-          }
+    const fetchJson = (url) =>
+        fetch(url).then(res => {
+            if (!res.ok) return res.json().then(err => { throw err; });
+            return res.json();
         });
 
-      } else if ('MODEL' in first || data.some(d => 'MODEL' in d)) {
-        // pivot rows of form {DATE, MODEL, PRED_TARGET}
-        // get sorted unique dates
-        const dates = Array.from(new Set(data.map(r => getVal(r, ['MONTH','month']))))
-                           .sort((a,b)=> new Date(a) - new Date(b));
-        const models = Array.from(new Set(data.map(r => r.MODEL)));
+    fetchJson('/run-forecasting')
+        .then(data => {
+            console.log("📦 Unified forecast payload:", data);
+            if (!data || typeof data !== 'object') return;
 
-        const datasets = models.map((m, idx) => {
-          const arr = dates.map(d => {
-            const found = data.find(r => getVal(r, ['MONTH','month']) === d && r.MODEL === m);
-            return found ? Number(found.PRED_TARGET) : null;
-          });
-          // simple color choice
-          const colors = ['blue','green','orange','purple','red'];
-          return {
-            label: m,
-            data: arr,
-            borderColor: colors[idx % colors.length],
-            fill: false
-          };
+            // --- 1️⃣ Populate comparison table ---
+            const tableBody = document.querySelector("#testPredictedTable tbody");
+            tableBody.innerHTML = '';
+            data.comparison.forEach(row => {
+                const Month = getVal(row, ['MONTH','Month','month']);
+                const actual = getVal(row, ['Actual','ACTUAL','actual']);
+                const xgb = getVal(row, ['XGBoost','xgboost','XGB','Predicted_XGB']);
+                const rf = getVal(row, ['RandomForest','randomforest','RF','Predicted_RF']);
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${Month}</td><td>${actual}</td><td>${xgb}</td><td>${rf}</td>`;
+                tableBody.appendChild(tr);
+            });
+
+            // --- 2️⃣ Full Forecast Line Chart ---
+            data.monthly.sort((a, b) => new Date(a.month_date) - new Date(b.month_date));
+            const labelsMonthly = data.monthly.map(r => getVal(r, ['MONTH','Month','month']));
+            const rfDataMonthly = data.monthly.map(r => Number(getVal(r, ['Predicted_RF','PREDICTED_RF','RF_PRED'])) || null);
+            const xgbDataMonthly = data.monthly.map(r => Number(getVal(r, ['Predicted_XGB','PREDICTED_XGB','XGB_PRED'])) || null);
+
+            new Chart(document.getElementById('forecastChart').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labelsMonthly,
+                    datasets: [
+                        { label: 'Random Forest', data: rfDataMonthly, borderColor: '#0B1957', backgroundColor: 'transparent', fill: false },
+                        { label: 'XGBoost', data: xgbDataMonthly, borderColor: '#9ECCFA', backgroundColor: 'transparent', fill: false }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    layout: { padding: { top: 20, right: 20, bottom: 20, left: 10 } },
+                    scales: {
+                        y: { title: { display: true, text: 'Units Sold' }, ticks: { callback: v => (v/1_000_000).toFixed(1)+'M' } },
+                        x: { title: { display: true, text: 'Month' } }
+                    }
+                }
+            });
+
+            // --- 3️⃣ Color Palettes ---
+            const townColors = ['#F6D55C', '#ED553B', '#3CAEA3', '#20639B', '#173F5F', '#F0EDEE'];
+
+            // --- 6️⃣ Town × Random Forest ---
+            const townLabels = [...new Set(data.TownRecords.map(r => getVal(r, ['MONTH','Month','month'])))];
+            const towns = [...new Set(data.TownRecords.map(r => getVal(r, ['TOWN','town','Town'])))];
+
+            const rfTownDatasets = towns.map((town, idx) => {
+                const values = townLabels.map(month => {
+                    const row = data.TownRecords.find(r => getVal(r, ['TOWN','town','Town'])===town && getVal(r, ['MONTH','Month','month'])===month);
+                    return row ? Number(getVal(row, ['Predicted_RF','PREDICTED_RF','RF_PRED'])) : 0;
+                });
+                return { label: town, data: values, borderColor: townColors[idx % townColors.length], fill: false };
+            });
+
+            new Chart(document.getElementById('townChartRF').getContext('2d'), {
+                type: 'line',
+                data: { labels: townLabels, datasets: rfTownDatasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { y: { title: { display: true, text: 'Units Sold' } }, x: { title: { display: true, text: 'Month' } } }
+                }
+            });
+
+            // --- 7️⃣ Town × XGBoost ---
+            const xgbTownDatasets = towns.map((town, idx) => {
+                const values = townLabels.map(month => {
+                    const row = data.TownRecords.find(r => getVal(r, ['TOWN','town','Town'])===town && getVal(r, ['MONTH','Month','month'])===month);
+                    return row ? Number(getVal(row, ['Predicted_XGB','PREDICTED_XGB','XGB_PRED'])) : 0;
+                });
+                return { label: town, data: values, borderColor: townColors[idx % townColors.length], fill: false };
+            });
+
+            new Chart(document.getElementById('townChartXGB').getContext('2d'), {
+                type: 'line',
+                data: { labels: townLabels, datasets: xgbTownDatasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { y: { title: { display: true, text: 'Units Sold' } }, x: { title: { display: true, text: 'Month' } } }
+                }
+            });
+              // --- 6️⃣ Town Pie Chart (using RF totals) ---
+              const townTotals = towns.map(town => {
+                  return data.TownRecords
+                      .filter(r => getVal(r, ['TOWN','town','Town']) === town)
+                      .reduce((sum, row) => sum + Number(getVal(row, ['Predicted_RF','PREDICTED_RF','RF_PRED'])), 0);
+              });
+
+              new Chart(document.getElementById('townPieChart').getContext('2d'), {
+                  type: 'pie',
+                  data: {
+                      labels: towns,
+                      datasets: [{
+                          data: townTotals,
+                          backgroundColor: townColors
+                      }]
+                  },
+                  options: {
+                      responsive: true,
+                      plugins: {
+                          legend: { position: 'top' },
+                          tooltip: { callbacks: {
+                              label: function(context) {
+                                  return context.label + ': ' + context.raw.toLocaleString() + ' units';
+                              }
+                          }}
+                      }
+                  }
+              });
+
+        })
+        .catch(err => {
+            console.error('💥 Error fetching unified forecast:', err);
         });
-
-        const ctx = document.getElementById('forecastChart').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: dates,
-            datasets
-          }
-        });
-
-      } else {
-        console.error('Unknown forecast payload shape:', first);
-      }
-    })
-    .catch(err => {
-      console.error('Error fetching /generate-forward-forecast:', err);
-    });
-
 });
 </script>
-
 {% endblock %}

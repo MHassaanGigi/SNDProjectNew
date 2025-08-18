@@ -1,6 +1,6 @@
 # app/routes.py
-from flask import Blueprint, render_template
-
+from flask import Blueprint, render_template, jsonify, request
+import numpy as np
 main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
@@ -27,45 +27,49 @@ def RegionWise():
 def TopBrands():
     return render_template('TopBrands.html')
 
-from flask import jsonify
-from SkuWuseModel import run_forecasting,generate_forward_forecast
-import numpy as np
-trained_model_cache = None
+from SWM import run_full_forecast  # updated import for new merged function
+import pandas as pd
+import traceback
+import logging
 
 @main_bp.route('/run-forecasting', methods=['GET'])
 def run_forecasting_route():
-    global trained_model_cache
     try:
-        monthly_df,trained_model_cache = run_forecasting() 
-        for col in monthly_df.select_dtypes(include=[np.number]).columns:
-            monthly_df[col] = monthly_df[col].round().astype(int)
-        results_list = monthly_df.to_dict(orient="records")  # convert DF to list of dicts
-        return jsonify(results_list)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logging.error("DEBUG: Entered /run-forecasting endpoint.")
 
-@main_bp.route('/generate-forward-forecast', methods=['GET'])
-def forward_forecast_route():
-    global trained_model_cache
-    try:
-        if trained_model_cache is None:
-            print("No cached models, running training now...")
-        _, trained_model_cache = run_forecasting()
-        print("Training completed:", trained_model_cache)
-        if trained_model_cache is None:
-            return jsonify({"error": "Failed to train models"}), 500
-            
-        forecast_df = generate_forward_forecast(trained_model_cache)  # uses hardcoded territory for now
-        for col in forecast_df.select_dtypes(include=[np.number]).columns:
-            forecast_df[col] = forecast_df[col].round().astype(int)
-        results_list = forecast_df.to_dict(orient="records")
-        return jsonify(results_list)
+        # Unpack both DataFrames
+        comparison_df, monthly_df,sku_df,town_df = run_full_forecast(debug=False)
+
+        logging.error("DEBUG: run_forecasting() returned comparison_df columns: %s", comparison_df.columns.tolist())
+        logging.error("DEBUG: run_forecasting() returned monthly_df columns: %s", monthly_df.columns.tolist())
+
+        # Function to round numeric columns and convert to dict
+        def df_to_records(df):
+            for col in df.select_dtypes(include=[float, int]):
+                df[col] = df[col].round().astype(int)
+            return df.to_dict(orient='records')
+
+        # Convert both
+        comparison_records = df_to_records(comparison_df)
+        monthly_records = df_to_records(monthly_df)
+        sku_records = df_to_records(sku_df)
+        town_records = df_to_records(town_df)
+
+        # Return both as separate keys
+        return jsonify({
+            "comparison": comparison_records,
+            "monthly": monthly_records,
+            "SkuRecords": sku_records,
+            "TownRecords": town_records
+        })
+
     except Exception as e:
+        logging.error("❌ Exception in /run-forecasting: %s", str(e))
+        logging.error(traceback.format_exc())
         return jsonify({"error": str(e)}), 500
-    
 
 from Region import run_forecast
-from flask import request
+
 @main_bp.route('/region-forecast',methods=['GET'])
 def forecast_route():
     division = request.args.get('division', None)

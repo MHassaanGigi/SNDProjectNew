@@ -351,3 +351,25 @@ background-color: #f8f3fa !important;
     border-collapse: collapse;
     width: 200px; /* adjust as needed */
 }
+
+.sku-box {
+  background-color: #0B1957; /* dark navy */
+  color: #fff;               /* text in white */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  width: 120px;
+  margin: auto;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.sku-box p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.sku-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
